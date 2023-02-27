@@ -18,7 +18,6 @@ public class MovementController : MonoBehaviour
     [Header("Varibles")]
     private Rigidbody rb;
     private Vector3 vMovement;
-    private Camera cam;
 
     [Header("Speed Control")]
     [SerializeField] private float speed = 100f;

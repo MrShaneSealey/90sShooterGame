@@ -24,8 +24,6 @@ public class CameraController : MonoBehaviour
     public float sensX = 35f;
     public float sensY = 35f;
 
-    public Transform orientation;
-
     private Vector3 vRotation;
 
     private void Awake()
@@ -78,13 +76,12 @@ public class CameraController : MonoBehaviour
         float mouseX = vRotation.y * Time.deltaTime * sensX;
         float mouseY = vRotation.x * Time.deltaTime * sensY;
 
-        //look up and down handled by the camera & Clamp
-        mouseX = Mathf.Clamp(mouseX,-90f,90f);
-
-    
-        cam.transform.Rotate(mouseX,0,0);
-        //looking left and right handled by the RigidBody
-        rb.transform.Rotate(0,mouseY,0);
+        transform.Rotate(mouseX, 0, 0);
+        cam.transform.Rotate(mouseX, mouseY, 0);
+        
+        //cam.transform.rotation = Quaternion.Euler(mouseX,rb.transform.rotation.y,0);
+        //rb.transform.rotation = Quaternion.Euler(0,mouseY,0);
+        
 
     }
 
