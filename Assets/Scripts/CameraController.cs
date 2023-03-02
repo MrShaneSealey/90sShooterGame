@@ -23,9 +23,7 @@ public class CameraController : MonoBehaviour
     [Header("Camera Control")]
     public float sensX = 35f;
     public float sensY = 35f;
-
-    public Transform orientation;
-
+    
     private Vector3 vRotation;
 
     private void Awake()
@@ -42,7 +40,7 @@ public class CameraController : MonoBehaviour
 
         //enable
         playerInput.Enable();
-
+        //a
         #region subscribe
 
         //look
@@ -90,7 +88,7 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        onLook(lookContex);
+        //onLook(lookContex);
     }
 
 }
