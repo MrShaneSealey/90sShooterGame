@@ -80,6 +80,15 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""ac6ecf3d-e128-4d83-9e55-df55e9a1465a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -247,6 +256,17 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
                     ""action"": ""LockMouse"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c9283262-c73a-4499-8a6f-271abeb8a7c0"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -289,6 +309,7 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
         m_Gameplay_SwapLeft = m_Gameplay.FindAction("Swap Left", throwIfNotFound: true);
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_LockMouse = m_Gameplay.FindAction("LockMouse", throwIfNotFound: true);
+        m_Gameplay_Dash = m_Gameplay.FindAction("Dash", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -354,6 +375,7 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_SwapLeft;
     private readonly InputAction m_Gameplay_Jump;
     private readonly InputAction m_Gameplay_LockMouse;
+    private readonly InputAction m_Gameplay_Dash;
     public struct GameplayActions
     {
         private @PlayerBindings m_Wrapper;
@@ -364,6 +386,7 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
         public InputAction @SwapLeft => m_Wrapper.m_Gameplay_SwapLeft;
         public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
         public InputAction @LockMouse => m_Wrapper.m_Gameplay_LockMouse;
+        public InputAction @Dash => m_Wrapper.m_Gameplay_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -391,6 +414,9 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
                 @LockMouse.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnLockMouse;
                 @LockMouse.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnLockMouse;
                 @LockMouse.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnLockMouse;
+                @Dash.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDash;
+                @Dash.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDash;
+                @Dash.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDash;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -413,6 +439,9 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
                 @LockMouse.started += instance.OnLockMouse;
                 @LockMouse.performed += instance.OnLockMouse;
                 @LockMouse.canceled += instance.OnLockMouse;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
             }
         }
     }
@@ -443,5 +472,6 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
         void OnSwapLeft(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnLockMouse(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
 }
