@@ -41,7 +41,7 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
                     ""type"": ""Value"",
                     ""id"": ""981fecc2-2e7a-4d6a-b041-00b47626e0a1"",
                     ""expectedControlType"": ""Vector2"",
-                    ""processors"": ""InvertVector2(invertX=false)"",
+                    ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
                 },
@@ -89,6 +89,15 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LookKeyboard"",
+                    ""type"": ""Value"",
+                    ""id"": ""7d7cbc62-2636-415b-bfed-596be92ab834"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -267,6 +276,39 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
                     ""action"": ""Dash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""db5d7943-b11f-48be-8c04-658b2109258b"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LookKeyboard"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""46c8659c-2f19-421e-9f3a-546ba1efcbe8"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LookKeyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""5715929c-935a-41f8-bd4f-b4c81d40d2e7"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LookKeyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -310,6 +352,7 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_LockMouse = m_Gameplay.FindAction("LockMouse", throwIfNotFound: true);
         m_Gameplay_Dash = m_Gameplay.FindAction("Dash", throwIfNotFound: true);
+        m_Gameplay_LookKeyboard = m_Gameplay.FindAction("LookKeyboard", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -376,6 +419,7 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Jump;
     private readonly InputAction m_Gameplay_LockMouse;
     private readonly InputAction m_Gameplay_Dash;
+    private readonly InputAction m_Gameplay_LookKeyboard;
     public struct GameplayActions
     {
         private @PlayerBindings m_Wrapper;
@@ -387,6 +431,7 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
         public InputAction @LockMouse => m_Wrapper.m_Gameplay_LockMouse;
         public InputAction @Dash => m_Wrapper.m_Gameplay_Dash;
+        public InputAction @LookKeyboard => m_Wrapper.m_Gameplay_LookKeyboard;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -417,6 +462,9 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
                 @Dash.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDash;
                 @Dash.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDash;
                 @Dash.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnDash;
+                @LookKeyboard.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnLookKeyboard;
+                @LookKeyboard.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnLookKeyboard;
+                @LookKeyboard.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnLookKeyboard;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -442,6 +490,9 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
                 @Dash.started += instance.OnDash;
                 @Dash.performed += instance.OnDash;
                 @Dash.canceled += instance.OnDash;
+                @LookKeyboard.started += instance.OnLookKeyboard;
+                @LookKeyboard.performed += instance.OnLookKeyboard;
+                @LookKeyboard.canceled += instance.OnLookKeyboard;
             }
         }
     }
@@ -473,5 +524,6 @@ public partial class @PlayerBindings : IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnLockMouse(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
+        void OnLookKeyboard(InputAction.CallbackContext context);
     }
 }

@@ -21,10 +21,15 @@ public class CameraController : MonoBehaviour
     private Camera cam;
 
     [Header("Camera Control")]
-    public float sensX = 35f;
-    public float sensY = 35f;
+    public float sensX = 5f;
+    public float sensY = 5f;
 
-    private Vector3 vRotation;
+    [Tooltip("Time it takes to interpolate camera rotation 99% of the way to the target."), Range(0.001f, 1f)]
+    public float lerpTime = 0.01f;
+ 
+
+    private Vector2 vRotation;
+    private float vKeyRotaion;
 
     private void Awake()
     {
@@ -33,8 +38,50 @@ public class CameraController : MonoBehaviour
         playerInput = new PlayerBindings();
     }
 
-    private void OnEnable()
+    class CameraRotation
     {
+        public float yaw, pitch, roll;
+
+        public void InitializeFromTransform(Transform t)
+        {
+            pitch = t.eulerAngles.x;
+            yaw = t.eulerAngles.y;
+            roll = t.eulerAngles.z;
+        }
+
+        public void LerpTowards(CameraRotation target, float rotationLerpPct)
+        {
+            yaw = Mathf.Lerp(yaw, target.yaw, rotationLerpPct);
+            pitch = Mathf.Lerp(pitch, target.pitch, rotationLerpPct);
+            roll = Mathf.Lerp(roll, target.roll, rotationLerpPct);
+        }
+
+        public void UpdateTransform(Transform t)
+        {
+            t.eulerAngles = new Vector3(pitch, yaw, roll);
+        }
+    }
+
+    CameraRotation targetRotation = new CameraRotation();
+    CameraRotation currentRotation = new CameraRotation();
+
+
+    void OnDisable() {
+
+        playerInput.Disable();
+
+        #region unsubscribe
+
+        //look
+        look.performed -= onLook;
+        #endregion
+
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    void OnEnable()
+    {
+
         look = playerInput.Gameplay.Look;
         mouseLock = playerInput.Gameplay.LockMouse;
 
@@ -47,47 +94,36 @@ public class CameraController : MonoBehaviour
         look.performed += onLook;
         #endregion
 
-    }
 
-    private void OnDisable()
-    {
-        //disable
-        playerInput.Disable();
+        targetRotation.InitializeFromTransform(transform);
+        currentRotation.InitializeFromTransform(transform);
 
-        #region unsubscribe
-
-        //look
-        look.performed -= onLook;
-        #endregion
+        // This makes the cursor hidden -- hit Escape to get your cursor back so you can exit play mode
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void onLook(InputAction.CallbackContext context)
     {
-        lookContex = context;
-
-        if (mouseLock.triggered)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-
         vRotation = look.ReadValue<Vector2>();
-        //vRotation.Normalize();
-        //inverted y and x cause of mouse delta being the wrong way around
-        float mouseX = vRotation.y * Time.deltaTime * sensX;
-        float mouseY = vRotation.x * Time.deltaTime * sensY;
 
-        transform.Rotate(mouseX, 0, 0);
-        cam.transform.Rotate(mouseX, mouseY, 0);
-        
-        //cam.transform.rotation = Quaternion.Euler(mouseX,rb.transform.rotation.y,0);
-        //rb.transform.rotation = Quaternion.Euler(0,mouseY,0);
-        
+        // Update the target rotation based on mouse input
+        var mouseInput = new Vector2(vRotation.x, vRotation.y * -1);
+        targetRotation.yaw += mouseInput.x * sensX;
+        targetRotation.pitch += mouseInput.y * sensY;
 
+        // Don't allow the camera to flip upside down
+        targetRotation.pitch = Mathf.Clamp(targetRotation.pitch, -90, 90);
+
+        // Calculate the new rotation using framerate-independent interpolation
+        var lerpPct = 1f - Mathf.Exp(Mathf.Log(0.01f) / lerpTime * Time.deltaTime);
+        currentRotation.LerpTowards(targetRotation, lerpPct);
+
+        // Commit the rotation changes to the transform
+        currentRotation.UpdateTransform(transform);
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         onLook(lookContex);
     }
-
 }

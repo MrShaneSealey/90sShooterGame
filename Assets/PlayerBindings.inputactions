@@ -19,7 +19,7 @@
                     "type": "Value",
                     "id": "981fecc2-2e7a-4d6a-b041-00b47626e0a1",
                     "expectedControlType": "Vector2",
-                    "processors": "InvertVector2(invertX=false)",
+                    "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
                 },
@@ -67,6 +67,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "LookKeyboard",
+                    "type": "Value",
+                    "id": "7d7cbc62-2636-415b-bfed-596be92ab834",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -245,6 +254,39 @@
                     "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "db5d7943-b11f-48be-8c04-658b2109258b",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LookKeyboard",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "46c8659c-2f19-421e-9f3a-546ba1efcbe8",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LookKeyboard",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "5715929c-935a-41f8-bd4f-b4c81d40d2e7",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LookKeyboard",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

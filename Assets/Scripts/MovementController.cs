@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -37,13 +38,19 @@ public class MovementController : MonoBehaviour
 
     [Header("Jump")]
     public float jumpHeight = 10f;
-    public bool isGrounded = false;
+    private float distToGround;
+    public bool isGrounded;
+    [SerializeField]private Collider collider_;
+    [SerializeField] private LayerMask layerMask_;
     #endregion
 
     private void Awake()
     {
         playerInput = new PlayerBindings();
         rb = GetComponent<Rigidbody>();
+        collider_ = GetComponentInChildren<Collider>();
+
+        distToGround = collider_.bounds.extents.y;
     }
 
     private void OnEnable()
@@ -86,7 +93,7 @@ public class MovementController : MonoBehaviour
         playerVelocity = movement.ReadValue<Vector3>();
         playerVelocity.Normalize();
 
-        rb.AddForce(playerVelocity * speed * Time.deltaTime);
+        rb.AddRelativeForce(playerVelocity * speed * Time.deltaTime);
 
     }
 
@@ -97,9 +104,9 @@ public class MovementController : MonoBehaviour
 
         if (dash.triggered && dashOn)
         {
-           rb.AddForce(Vector3.forward * dashSpeed * Time.deltaTime, ForceMode.Impulse);
-           dashTime = 0;
-           dashOn = false;
+            rb.AddForce(Vector3.forward * dashSpeed * Time.deltaTime, ForceMode.Impulse);
+            dashTime = 0;
+            dashOn = false;
         }
 
         //CDR
@@ -113,23 +120,23 @@ public class MovementController : MonoBehaviour
             dashOn = true;
         }
 
+
+    }
+    public bool IsGrounded()
+    {
         
+        return Physics.Raycast(transform.position, Vector3.down, distToGround + 0.1f);
     }
 
     private void onJump(InputAction.CallbackContext context)
     {
         jumpContex = context;
 
-        if (playerVelocity.y <= 0) 
-        { isGrounded = true; }
-        else if (playerVelocity.y > 0) 
-        { isGrounded = false; }
-
-        if(jump.triggered && isGrounded)
+        if(jump.triggered && IsGrounded())
         {
             rb.AddForce(Vector3.up * jumpHeight * Time.deltaTime, ForceMode.Impulse);
         }
-        Debug.Log("helloworld");
+        
     }
 
 
