@@ -39,9 +39,9 @@ public class MovementController : MonoBehaviour
     [Header("Jump")]
     public float jumpHeight = 10f;
     private float distToGround;
-    public bool isGrounded;
+    //public bool isGrounded;
     [SerializeField]private Collider collider_;
-    [SerializeField] private LayerMask layerMask_;
+    //[SerializeField] private LayerMask layerMask_;
     #endregion
 
     private void Awake()
@@ -124,7 +124,6 @@ public class MovementController : MonoBehaviour
     }
     public bool IsGrounded()
     {
-        
         return Physics.Raycast(transform.position, Vector3.down, distToGround + 0.1f);
     }
 

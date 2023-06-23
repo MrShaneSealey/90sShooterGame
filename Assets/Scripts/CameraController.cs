@@ -42,6 +42,7 @@ public class CameraController : MonoBehaviour
     {
         public float yaw, pitch, roll;
 
+        //grabs transform info and maybe updates
         public void InitializeFromTransform(Transform t)
         {
             pitch = t.eulerAngles.x;
@@ -49,6 +50,7 @@ public class CameraController : MonoBehaviour
             roll = t.eulerAngles.z;
         }
 
+        //lerp
         public void LerpTowards(CameraRotation target, float rotationLerpPct)
         {
             yaw = Mathf.Lerp(yaw, target.yaw, rotationLerpPct);
@@ -56,6 +58,7 @@ public class CameraController : MonoBehaviour
             roll = Mathf.Lerp(roll, target.roll, rotationLerpPct);
         }
 
+        //updates transform
         public void UpdateTransform(Transform t)
         {
             t.eulerAngles = new Vector3(pitch, yaw, roll);
@@ -81,7 +84,6 @@ public class CameraController : MonoBehaviour
 
     void OnEnable()
     {
-
         look = playerInput.Gameplay.Look;
         mouseLock = playerInput.Gameplay.LockMouse;
 
@@ -93,7 +95,6 @@ public class CameraController : MonoBehaviour
         //look
         look.performed += onLook;
         #endregion
-
 
         targetRotation.InitializeFromTransform(transform);
         currentRotation.InitializeFromTransform(transform);
@@ -117,6 +118,8 @@ public class CameraController : MonoBehaviour
         // Calculate the new rotation using framerate-independent interpolation
         var lerpPct = 1f - Mathf.Exp(Mathf.Log(0.01f) / lerpTime * Time.deltaTime);
         currentRotation.LerpTowards(targetRotation, lerpPct);
+
+        Vector3 transYaw = new Vector3(targetRotation.yaw,0, 0);
 
         // Commit the rotation changes to the transform
         currentRotation.UpdateTransform(transform);
