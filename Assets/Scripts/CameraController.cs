@@ -17,8 +17,8 @@ public class CameraController : MonoBehaviour
     private InputAction.CallbackContext lookContex;
 
     [Header("Objects")]
-    private Rigidbody rb;
-    private Camera cam;
+    [SerializeField]private Rigidbody rb;
+    [SerializeField]private Camera cam;
 
     [Header("Camera Control")]
     public float sensX = 5f;
@@ -26,10 +26,6 @@ public class CameraController : MonoBehaviour
 
     [Tooltip("Time it takes to interpolate camera rotation 99% of the way to the target."), Range(0.001f, 1f)]
     public float lerpTime = 0.01f;
- 
-
-    private Vector2 vRotation;
-    private float vKeyRotaion;
 
     private void Awake()
     {
@@ -37,36 +33,6 @@ public class CameraController : MonoBehaviour
         cam = GetComponentInChildren<Camera>();
         playerInput = new PlayerBindings();
     }
-
-    class CameraRotation
-    {
-        public float yaw, pitch, roll;
-
-        //grabs transform info and maybe updates
-        public void InitializeFromTransform(Transform t)
-        {
-            pitch = t.eulerAngles.x;
-            yaw = t.eulerAngles.y;
-            roll = t.eulerAngles.z;
-        }
-
-        //lerp
-        public void LerpTowards(CameraRotation target, float rotationLerpPct)
-        {
-            yaw = Mathf.Lerp(yaw, target.yaw, rotationLerpPct);
-            pitch = Mathf.Lerp(pitch, target.pitch, rotationLerpPct);
-            roll = Mathf.Lerp(roll, target.roll, rotationLerpPct);
-        }
-
-        //updates transform
-        public void UpdateTransform(Transform t)
-        {
-            t.eulerAngles = new Vector3(pitch, yaw, roll);
-        }
-    }
-
-    CameraRotation targetRotation = new CameraRotation();
-    CameraRotation currentRotation = new CameraRotation();
 
 
     void OnDisable() {
@@ -96,8 +62,8 @@ public class CameraController : MonoBehaviour
         look.performed += onLook;
         #endregion
 
-        targetRotation.InitializeFromTransform(transform);
-        currentRotation.InitializeFromTransform(transform);
+        //targetRotation.InitializeFromTransform(transform);
+        //currentRotation.InitializeFromTransform(transform);
 
         // This makes the cursor hidden -- hit Escape to get your cursor back so you can exit play mode
         Cursor.lockState = CursorLockMode.Locked;
@@ -105,24 +71,14 @@ public class CameraController : MonoBehaviour
 
     private void onLook(InputAction.CallbackContext context)
     {
-        vRotation = look.ReadValue<Vector2>();
+        Vector3 mouseInput = look.ReadValue<Vector2>();
 
-        // Update the target rotation based on mouse input
-        var mouseInput = new Vector2(vRotation.x, vRotation.y * -1);
-        targetRotation.yaw += mouseInput.x * sensX;
-        targetRotation.pitch += mouseInput.y * sensY;
+        float x = mouseInput.x * sensX * Time.deltaTime;
+        float y = mouseInput.y * sensY * Time.deltaTime;
+        float z = 0;
 
-        // Don't allow the camera to flip upside down
-        targetRotation.pitch = Mathf.Clamp(targetRotation.pitch, -90, 90);
-
-        // Calculate the new rotation using framerate-independent interpolation
-        var lerpPct = 1f - Mathf.Exp(Mathf.Log(0.01f) / lerpTime * Time.deltaTime);
-        currentRotation.LerpTowards(targetRotation, lerpPct);
-
-        Vector3 transYaw = new Vector3(targetRotation.yaw,0, 0);
-
-        // Commit the rotation changes to the transform
-        currentRotation.UpdateTransform(transform);
+        cam.transform.rotation = Quaternion.Euler(x, y, z);
+        transform.rotation = Quaternion.Euler(x, 0, 0);
     }
 
     void FixedUpdate()
