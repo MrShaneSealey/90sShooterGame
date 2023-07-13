@@ -78,7 +78,9 @@ public class CameraController : MonoBehaviour
         float z = 0;
 
         cam.transform.rotation = Quaternion.Euler(x, y, z);
-        transform.rotation = Quaternion.Euler(x, 0, 0);
+        rb.transform.rotation = Quaternion.Euler(0, y, 0);
+
+        //i need push
     }
 
     void FixedUpdate()
